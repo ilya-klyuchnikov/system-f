@@ -1,4 +1,4 @@
-open Core
+open Sexplib
 
 (* Variables *)
 type var = Var.t

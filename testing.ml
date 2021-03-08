@@ -1,8 +1,4 @@
-open Core
-open Poly
-
 exception Check_equal_fail of string * string * string * string
-
 exception Check_equal_exc of string * string * string * string
 
 (*
@@ -17,7 +13,7 @@ let make_check_equal ?(test_module = "") ?(to_string = fun _ -> "#<abstr>") ()
     with any_exn ->
       raise
         (Check_equal_exc
-           (test_module, name, to_string expected, Exn.to_string any_exn))
+           (test_module, name, to_string expected, Base.Exn.to_string any_exn))
   in
   if actual = expected then ()
   else
