@@ -6,6 +6,7 @@
  * s-expression to build abstract syntax.
  *)
 open Core
+open Poly
 open Syntax
 module S = Sexp
 

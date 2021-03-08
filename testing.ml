@@ -1,4 +1,5 @@
 open Core
+open Poly
 
 exception Check_equal_fail of string * string * string * string
 
