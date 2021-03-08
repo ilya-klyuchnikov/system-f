@@ -46,19 +46,19 @@ let rec eval env = function
   | SubE (e1, e2) -> (
       match (eval env e1, eval env e2) with
       | IntV z1, IntV z2 -> IntV (z1 - z2)
-      | _ -> raise (Can't_happen "ints expected") )
+      | _ -> raise (Can't_happen "ints expected"))
   | If0E (cond, zero, non_zero) -> (
       match eval env cond with
       | IntV 0 -> eval env zero
       | IntV _ -> eval env non_zero
-      | _ -> raise (Can't_happen "int expected") )
+      | _ -> raise (Can't_happen "int expected"))
   | TupE es ->
       let vs = List.map ~f:(eval env) es in
       TupV (Array.of_list vs)
   | PrjE (e, i) -> (
       match eval env e with
       | TupV vs -> vs.(i)
-      | _ -> raise (Can't_happen "tuple expected") )
+      | _ -> raise (Can't_happen "tuple expected"))
   | LamE (bindings, body) ->
       CloV (env, List.map ~f:(fun (x, _) -> x) bindings, body)
   | AppE (e0, es) -> (
@@ -68,7 +68,7 @@ let rec eval env = function
       | CloV (env, xs, body) ->
           let env = Env.extend_lists env xs vs in
           eval env body
-      | _ -> raise (Can't_happen "closure expected") )
+      | _ -> raise (Can't_happen "closure expected"))
   | FixE (x, (ArrT (ts, _) as t), e)
   | FixE (x, HoleT { contents = Some (ArrT (ts, _) as t) }, e) ->
       (*
@@ -95,7 +95,7 @@ let rec eval env = function
       | CloV (env, xs, body) ->
           let env = Env.extend_lists env xs (List.map ~f:(fun _ -> TypV) ts) in
           eval env body
-      | _ -> raise (Can't_happen "closure expected") )
+      | _ -> raise (Can't_happen "closure expected"))
   | HoleE e -> eval env !e
 
 let () =

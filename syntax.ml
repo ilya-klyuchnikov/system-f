@@ -39,7 +39,7 @@ let rec sexp_of_sexp type_env = function
   | VarT n -> (
       match List.nth type_env n with
       | Some x -> S.Atom x
-      | None -> S.Atom ("?" ^ Int.to_string n) )
+      | None -> S.Atom ("?" ^ Int.to_string n))
   | AllT (n, t) ->
       let tvs = Var.fresh_n n (Var.Set.of_list type_env) in
       S.List
@@ -78,7 +78,7 @@ let ref_occurs_in r t =
     | AllT (_, t) -> do_check t
     | HoleT r' -> (
         if phys_equal r r' then true
-        else match !r' with None -> false | Some t -> do_check t )
+        else match !r' with None -> false | Some t -> do_check t)
   in
   do_check t
 

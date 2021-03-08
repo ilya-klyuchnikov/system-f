@@ -26,8 +26,8 @@ let assert_arr t0 =
 let assert_holes_not_occurs_in r t =
   if ref_occurs_in r t then
     failwith
-      ( "Occurrence check failed: the reference holding "
-      ^ string_of_type (HoleT r) ^ " appears in the type " ^ string_of_type t )
+      ("Occurrence check failed: the reference holding "
+     ^ string_of_type (HoleT r) ^ " appears in the type " ^ string_of_type t)
   else ()
 
 (* Asserts that two types are the same. *)
@@ -39,8 +39,8 @@ let assert_same_type t1 t2 =
     | HoleT { contents = None }, HoleT { contents = None } ->
         raise
           (Type_error
-             ( "cannot resolve type holes in " ^ Syntax.string_of_type t1
-             ^ " and " ^ Syntax.string_of_type t2 ))
+             ("cannot resolve type holes in " ^ Syntax.string_of_type t1
+            ^ " and " ^ Syntax.string_of_type t2))
     (* If the above pattern does not match, then at least one side is _not_
        of form (HoleT {contents = None}). Combining with the first two
        patterns, we know that at least one side is not (HoleT _). *)
@@ -61,16 +61,16 @@ let assert_same_type t1 t2 =
     | _ ->
         raise
           (Type_error
-             ( "type mismatch: " ^ Syntax.string_of_type t1 ^ " ≠ "
-             ^ Syntax.string_of_type t2 ))
+             ("type mismatch: " ^ Syntax.string_of_type t1 ^ " ≠ "
+            ^ Syntax.string_of_type t2))
   in
   do_assert (t1, t2)
 
 let assert_complete_type ?(context = "") t =
   if type_has_hole t then
     got_hole
-      ( (if String.is_empty context then "" else context ^ ": ")
-      ^ Syntax.string_of_type t )
+      ((if String.is_empty context then "" else context ^ ": ")
+      ^ Syntax.string_of_type t)
   else ()
 
 let assert_same_len n ls =
@@ -78,8 +78,8 @@ let assert_same_len n ls =
   else
     raise
       (Type_error
-         ( "arity mismatch: expected " ^ string_of_int n ^ ", got "
-         ^ string_of_int (List.length ls) ))
+         ("arity mismatch: expected " ^ string_of_int n ^ ", got "
+         ^ string_of_int (List.length ls)))
 
 (* Projects the `i`th element of a tuple type. *)
 let prj_tup t0 i =
@@ -87,7 +87,7 @@ let prj_tup t0 i =
   | TupT ts as t -> (
       match List.nth ts i with
       | Some t -> t
-      | None -> got_exp t ("tuple of size at least " ^ string_of_int (i + 1)) )
+      | None -> got_exp t ("tuple of size at least " ^ string_of_int (i + 1)))
   | t -> got_exp t "tuple type"
 
 (* Unpacks an arrow type of arity `i`. *)
@@ -165,8 +165,8 @@ let rec type_subst tau1 n tau =
   | HoleT { contents = Some t } -> type_subst t n tau
   | HoleT { contents = None } ->
       got_hole
-        ( "type_subst (" ^ Syntax.string_of_type tau1 ^ ") " ^ string_of_int n
-        ^ " (" ^ Syntax.string_of_type tau ^ ")" )
+        ("type_subst (" ^ Syntax.string_of_type tau1 ^ ") " ^ string_of_int n
+       ^ " (" ^ Syntax.string_of_type tau ^ ")")
 
 let rec type_substs tau1 n ts =
   match (n, ts) with
@@ -174,8 +174,8 @@ let rec type_substs tau1 n ts =
   | n, t :: ts -> type_substs (type_subst tau1 n t) (n - 1) ts
   | _ ->
       invalid_arg
-        ( "type_substs: number of type variables "
-        ^ "and number of supplied types do not match" )
+        ("type_substs: number of type variables "
+       ^ "and number of supplied types do not match")
 
 let () =
   (*
@@ -282,7 +282,7 @@ and tc_infer ((typevars_env, termvars_env) as env) = function
       | Some t ->
           assert_complete_type ~context:("the type of " ^ x) t;
           t
-      | None -> raise (Type_error ("unbound variable: " ^ x)) )
+      | None -> raise (Type_error ("unbound variable: " ^ x)))
   | LetE (xes, body) -> tc_infer (infer_elided_type_and_extend env xes) body
   | IntE _ -> IntT
   | SubE (e1, e2) ->
@@ -301,9 +301,9 @@ and tc_infer ((typevars_env, termvars_env) as env) = function
       List.iter xts ~f:(fun (x, t) ->
           assert_complete_type
             ~context:
-              ( "the type of argument " ^ x ^ " in (lam ("
+              ("the type of argument " ^ x ^ " in (lam ("
               ^ String.concat ~sep:" " (List.map ~f:fst xts)
-              ^ ") ...)" )
+              ^ ") ...)")
             t;
           kc typevars_env t);
       let termvars_env' = Env.extend_list termvars_env xts in
@@ -322,11 +322,11 @@ and tc_infer ((typevars_env, termvars_env) as env) = function
             ~f:
               (assert_complete_type
                  ~context:
-                   ( "inferred type application of "
+                   ("inferred type application of "
                    ^ Syntax.string_of_type (AllT (n, ArrT (ts1, tr1)))
                    ^ " to "
                    ^ String.concat ~sep:", "
-                       (List.rev_map ~f:Syntax.string_of_type holes) ));
+                       (List.rev_map ~f:Syntax.string_of_type holes)));
           e0 := APPE (!e0, List.rev holes);
           (* Just sanity check; should not go in to infinite loop since
              we have instantiated the type parameters. *)
@@ -334,7 +334,7 @@ and tc_infer ((typevars_env, termvars_env) as env) = function
       | t0 ->
           let tas, tr = un_arr (List.length es) t0 in
           let _ = List.map2_exn ~f:(tc_check env) es tas in
-          tr )
+          tr)
   | AppE (e0, es) ->
       let tas, tr = un_arr (List.length es) (tc_infer env e0) in
       let _ = List.map2_exn ~f:(tc_check env) es tas in
@@ -383,9 +383,9 @@ and tc_check ((typevars_env, termvars_env) as env) exp typ =
           assert_same_type t t';
           assert_complete_type
             ~context:
-              ( "the type of " ^ x ^ " in (lam ("
+              ("the type of " ^ x ^ " in (lam ("
               ^ String.concat ~sep:" " (List.map ~f:fst xts)
-              ^ ") ...)" )
+              ^ ") ...)")
             t);
       let termvars_env' = Env.extend_list termvars_env xts in
       tc_check (typevars_env, termvars_env') body tr

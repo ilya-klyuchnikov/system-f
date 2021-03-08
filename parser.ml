@@ -58,14 +58,14 @@ let rec type_of_sexp type_env = function
       assert_not_keyword x;
       match List.findi type_env ~f:(fun _ var -> x = var) with
       | Some (ix, _) -> VarT ix
-      | _ -> stx_err "bound type variable" (S.Atom x) )
+      | _ -> stx_err "bound type variable" (S.Atom x))
   | S.List (S.Atom "->" :: args)
     when List.exists ~f:(fun t -> t = S.Atom "->") args ->
       ArrT ([], type_of_sexp type_env (S.List args))
   | S.List (S.Atom "->" :: args) as t0 -> (
       match List.rev (List.map ~f:(type_of_sexp type_env) args) with
       | last :: init -> ArrT (List.rev init, last)
-      | [] -> stx_err "return type" t0 )
+      | [] -> stx_err "return type" t0)
   | S.List (S.Atom "*" :: args) ->
       TupT (List.map ~f:(type_of_sexp type_env) args)
   | S.List [ S.Atom "all"; S.List new_type_vars; arg ] ->
@@ -82,8 +82,8 @@ let rec type_of_sexp type_env = function
                 ~f:(fun ts trest ->
                   ArrT (List.map ~f:(type_of_sexp type_env) ts, trest))
                 ~init:(type_of_sexp type_env tr)
-          | _ -> failwith ("could not parse type: " ^ S.to_string s) )
-      | _ -> failwith ("could not parse type: " ^ S.to_string s) )
+          | _ -> failwith ("could not parse type: " ^ S.to_string s))
+      | _ -> failwith ("could not parse type: " ^ S.to_string s))
   | s -> failwith ("could not parse type: " ^ S.to_string s)
 
 (* Parses a type from a string, via an s-expression. *)
@@ -165,7 +165,7 @@ let rec expr_of_sexp type_env sexp0 =
       try IntE (Int.of_string s)
       with Failure _ ->
         assert_not_keyword s;
-        VarE s )
+        VarE s)
   | S.List ss -> (
       match ss with
       | [] -> stx_err "expression" sexp0
@@ -217,7 +217,7 @@ let rec expr_of_sexp type_env sexp0 =
       | e0 :: es ->
           AppE
             ( HoleE (ref (expr_of_sexp type_env e0)),
-              List.map ~f:(expr_of_sexp type_env) es ) )
+              List.map ~f:(expr_of_sexp type_env) es ))
 
 (* Parses an expression from a string, via s-expression. *)
 let expr_of_string s = expr_of_sexp [] (S.of_string s)
@@ -275,8 +275,8 @@ let () =
     (fun () ->
       let e =
         expr_of_string
-          ( "(Lam (a r) " ^ "   (lam ((k (all (s) (-> (-> a s) s))))"
-          ^ "      (@ k r)))" )
+          ("(Lam (a r) " ^ "   (lam ((k (all (s) (-> (-> a s) s))))"
+         ^ "      (@ k r)))")
       in
       normalize_expr e)
     (LAME
@@ -290,8 +290,8 @@ let () =
     (fun () ->
       let e =
         expr_of_string
-          ( "(Lam (a)" ^ "  (lam ((x a))" ^ "    (Lam (b)"
-          ^ "      (lam ((y b)) x))))" )
+          ("(Lam (a)" ^ "  (lam ((x a))" ^ "    (Lam (b)"
+         ^ "      (lam ((y b)) x))))")
       in
       normalize_expr e)
     (LAME

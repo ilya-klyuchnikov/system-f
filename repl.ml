@@ -34,14 +34,14 @@ let rec repl () =
   match read () with
   | None -> ()
   | Some e ->
-      ( try
-          let t =
-            Syntax.normalize_complete_type (Check.tc_infer (0, Env.empty) e)
-          in
-          print_string (" : " ^ Syntax.string_of_type t ^ "\n");
-          let v = Eval.eval Env.empty e in
-          print_string ("-> " ^ Eval.string_of_value v ^ "\n")
-        with Check.Type_error msg -> warn ("type error: " ^ msg ^ "\n") );
+      (try
+         let t =
+           Syntax.normalize_complete_type (Check.tc_infer (0, Env.empty) e)
+         in
+         print_string (" : " ^ Syntax.string_of_type t ^ "\n");
+         let v = Eval.eval Env.empty e in
+         print_string ("-> " ^ Eval.string_of_value v ^ "\n")
+       with Check.Type_error msg -> warn ("type error: " ^ msg ^ "\n"));
       repl ()
 
 let () =
