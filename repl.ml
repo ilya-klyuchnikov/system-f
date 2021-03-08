@@ -1,7 +1,8 @@
 open Core
 
-let check_equal_t = Testing.make_check_equal ~test_module:"Repl"
-                                             ~to_string:Syntax.string_of_type ()
+let check_equal_t =
+  Testing.make_check_equal ~test_module:"Repl" ~to_string:Syntax.string_of_type
+    ()
 
 let check_equal_any () = Testing.make_check_equal ~test_module:"Repl" ()
 
@@ -19,10 +20,10 @@ let rec read () =
     Some (Parser.expr_of_sexp [] (Sexp.input_sexp In_channel.stdin))
   with
   | End_of_file -> None
-  | Sexp.Parse_error(e) ->
+  | Sexp.Parse_error e ->
       warn ("Read error: " ^ e.err_msg ^ "\n");
       read ()
-  | Parser.Bad_syntax(exp, got) ->
+  | Parser.Bad_syntax (exp, got) ->
       warn ("Syntax error: expecting " ^ exp ^ ", got:\n");
       Sexp.output_hum_indent 2 Out_channel.stderr got;
       warn "\n";
@@ -33,19 +34,22 @@ let rec repl () =
   match read () with
   | None -> ()
   | Some e ->
-      (try
-        let t = Syntax.normalize_complete_type (Check.tc_infer (0 , Env.empty) e) in
-        print_string (" : " ^ Syntax.string_of_type t ^ "\n");
-        let v = Eval.eval Env.empty e in
-        print_string ("-> " ^ Eval.string_of_value v ^ "\n");
-      with Check.Type_error msg ->
-        warn ("type error: " ^ msg ^ "\n"));
+      ( try
+          let t =
+            Syntax.normalize_complete_type (Check.tc_infer (0, Env.empty) e)
+          in
+          print_string (" : " ^ Syntax.string_of_type t ^ "\n");
+          let v = Eval.eval Env.empty e in
+          print_string ("-> " ^ Eval.string_of_value v ^ "\n")
+        with Check.Type_error msg -> warn ("type error: " ^ msg ^ "\n") );
       repl ()
 
 let () =
-  check_equal_any () (fun () -> Parser.expr_of_string "(Lam (a b) 5)")
-                     (LAME(2, IntE 5))
+  check_equal_any ()
+    (fun () -> Parser.expr_of_string "(Lam (a b) 5)")
+    (LAME (2, IntE 5))
 
 let () =
-  check_equal_t (fun () -> Check.tc_infer (0, Env.empty) (LAME (2, (IntE 5))))
-                (Syntax.AllT (2, Syntax.IntT))
+  check_equal_t
+    (fun () -> Check.tc_infer (0, Env.empty) (LAME (2, IntE 5)))
+    (Syntax.AllT (2, Syntax.IntT))

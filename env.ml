@@ -14,20 +14,17 @@ let empty = []
 
 let map g xs = List.map ~f:(fun (x, v) -> (x, g x v)) xs
 
-let rec lookup env x = match env with
+let rec lookup env x =
+  match env with
   | [] -> None
   | (y, v) :: rest -> if x = y then Some v else lookup rest x
 
 let lookup_exn env x =
-  match lookup env x with
-  | None   -> raise (Unbound_variable x)
-  | Some v -> v
+  match lookup env x with None -> raise (Unbound_variable x) | Some v -> v
 
-let extend env x v =
-  (x, v) :: env
+let extend env x v = (x, v) :: env
 
 let extend_list env =
   List.fold ~f:(fun env' (x, v) -> extend env' x v) ~init:env
 
-let extend_lists env =
-  List.fold2_exn ~f:extend ~init:env
+let extend_lists env = List.fold2_exn ~f:extend ~init:env
