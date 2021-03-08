@@ -28,6 +28,8 @@ type exp =
   | APPE of exp * typ list
   | HoleE of exp ref
 
+val sexp_of_sexp : var list -> typ -> Sexp.t
+
 val string_of_type : typ -> string
 
 val view_type : typ -> typ
