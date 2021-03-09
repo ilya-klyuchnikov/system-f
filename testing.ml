@@ -1,4 +1,5 @@
 exception Check_equal_fail of string * string * string * string
+
 exception Check_equal_exc of string * string * string * string
 
 (*
