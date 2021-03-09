@@ -1,0 +1,43 @@
+(let ((id (lam (x) x)(all (t) (t -> t))))
+  id)
+
+(let ((id (Lam (a) (lam ((x a)) x))))
+  id)
+
+(let ((apply
+       (lam (fun arg) (fun arg))
+       (all (a) (-> (-> a a) a a)))
+      (id (lam (x) x)(all (t) (t -> t))))
+  ; full "annotation"
+  ((@ apply int) (@ id int) 1))
+
+
+(let ((apply
+       (lam (fun arg) (fun arg))
+       (all (a) (-> (-> a a) a a)))
+      (id (lam (x) x)(all (t) (t -> t))))
+  ; partial "annotation/type application" - works
+  (apply (@ id int) 1))
+
+(let ((apply
+       (lam (fun arg) (fun arg))
+       (all (a) (-> (-> a a) a a)))
+      (id (lam (x) x)(all (t) (t -> t))))
+  ; another partial "annotation/type application" - doesn't work
+  ((@ apply int) id 1))
+
+(let ((apply
+       (lam (fun arg) (fun arg))
+       (all (a) (-> (-> a a) a a)))
+      (id (lam (x) x)(all (t) (t -> t))))
+  ; no "annotation" - doesn't work
+  (apply id 1))
+
+;; apply and containers
+(let ((tapply
+       (lam (fun arg) (fun arg))
+       (all (a) (-> (-> (* a) (* a)) (* a) (* a))))
+      (id (lam (x) x)(all (t) (t -> t))))
+  ; partial "annotation/type application" - works
+  (tapply (@ id (* int)) (tup 1)))
+

@@ -1,0 +1,13 @@
+>  : (all (a) (-> a a))
+-> #<function>
+>  : (all (a) (-> a a))
+-> #<function>
+>  : int
+-> 1
+>  : int
+-> 1
+> type error: type mismatch: (-> int int) ≠ (all (a) (-> a a))
+> type error: type mismatch: (-> (-> _ _) _ _) ≠ (-> (all (a) (-> a a)) int _)
+>  : (* int)
+-> (tup 1)
+> 
