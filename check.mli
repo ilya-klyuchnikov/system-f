@@ -7,6 +7,8 @@ open Syntax
 (* Thrown on type errors. *)
 exception Type_error of string
 
+val type_subst : typ -> int -> typ -> typ
+
 (* Returns the type of an expression or throws Type_error. *)
 val tc_infer : int * typ Env.t -> exp -> typ
 
